@@ -2,6 +2,7 @@ import dataclasses
 import json
 import random
 import unittest
+from collections import deque
 
 from hanoi_crossing.engine import (
     Action,
@@ -322,6 +323,36 @@ class EngineTests(unittest.TestCase):
             repeated = step(second, player, action)
             self.assertEqual(result, repeated)
             first, second = result.state, repeated.state
+
+    def test_exhaustive_small_games_advertise_exactly_all_accepted_actions(self):
+        actions = (Action("skip"),) + tuple(
+            Action(kind, pole) for kind in ("lift", "place") for pole in (1, 2, 3)
+        )
+        total_states = 0
+        for disk_count in (1, 2):
+            initial = new_game(disk_count)
+            visited = {initial}
+            pending = deque([initial])
+            while pending:
+                state = pending.popleft()
+                for player in ("A", "B"):
+                    transitions = {action: step(state, player, action) for action in actions}
+                    accepted = {
+                        action for action, transition in transitions.items() if transition.accepted
+                    }
+                    self.assertEqual(
+                        set(legal_actions(observe(state, player))),
+                        accepted,
+                        (state, player),
+                    )
+                    for action in accepted:
+                        candidate = transitions[action].state
+                        if candidate not in visited:
+                            visited.add(candidate)
+                            pending.append(candidate)
+            self.assertTrue(any(state.terminal for state in visited))
+            total_states += len(visited)
+        self.assertGreater(total_states, 1900)
 
     def test_games_can_be_interleaved_without_interference(self):
         first = new_game(1)
