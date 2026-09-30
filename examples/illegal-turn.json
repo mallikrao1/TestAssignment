@@ -1,0 +1,10 @@
+{
+  "disk_count": 2,
+  "turn_order": ["A", "A", "A", "B"],
+  "moves": [
+    {"action": "place", "pole": 3},
+    {"action": "lift", "pole": 1},
+    {"action": "lift", "pole": 1},
+    {"action": "skip"}
+  ]
+}

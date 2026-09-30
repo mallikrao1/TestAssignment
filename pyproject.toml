@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hanoi-crossing"
+version = "0.1.0"
+description = "Immutable Hanoi Crossing engine with replay and random-play frontends"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+hanoi-crossing = "hanoi_crossing.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hanoi_crossing"]
